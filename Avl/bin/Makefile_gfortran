@@ -2,7 +2,7 @@
 # Makefile for AVL
 #
 
-BINDIR = ~/bin/
+BINDIR = /home/codes/bin/
 INSTALLCMD = install -s
 
 SRC = ../src
@@ -79,19 +79,23 @@ PLTOBJ = ../plotlib/libPltDP.a
 ##  Uncomment for Mac OSX gfortran
 FC = gfortran
 
-#ACHK = -fbounds-check
-ACHK =
+ACHK = -fbounds-check -finit-real=inf -ffpe-trap=invalid,zero,denormal
+#ACHK =
+
 
 #FTNLIB = -Vaxlib
 FTNLIB = 
 SECOND = second_g77.f
 
-#DP = -fdefault-real-8
 DP =
-#PLTOBJ = ../plotlib/libPltDP.a
-PLTOBJ = ../plotlib/libPlt_gfortran.a
+PLTOBJ = ../plotlib/libPlt_gSP.a
+EIGOBJ = ../eispack/eispack_gSP.a
 
-FFLAGS = -O  $(ACHK) $(DP)
+#DP = -fdefault-real-8
+#PLTOBJ = ../plotlib/libPltDP.a
+#EIGOBJ = ../eispack/eispack_gDP.a
+
+FFLAGS = -O -m64 $(ACHK) $(DP)
 ##---------------------------------------
 
 

@@ -39,12 +39,13 @@ C
       REAL XYZLES(3,NWRK),CHORDS(NWRK),AINCS(NWRK),SSPACES(NWRK),
      &     BRADY(NWRK), BRADZ(NWRK), CLAF(NWRK)
       INTEGER NSPANS(NWRK), NASEC(NWRK)
-      REAL XASEC(IBX,NWRK), SASEC(IBX,NWRK), TASEC(IBX,NWRK)
       REAL CLCDSEC(6,NWRK)
 C
       REAL XB(IBX), YB(IBX)
       REAL XIN(IBX), YIN(IBX), TIN(IBX)
       REAL XBOD(IBX), YBOD(IBX), TBOD(IBX)
+
+      REAL XASEC(IBX,NWRK), TASEC(IBX,NWRK), SASEC(IBX,NWRK)
 C
 C---- max number of control or design variable declaration lines per section
       PARAMETER (ICONX = 20)
@@ -596,21 +597,23 @@ C
         NASEC(ISEC) = MIN( 50 , IBX )
         DO I = 1, NASEC(ISEC)
           XF = XFMIN + (XFMAX-XFMIN)*FLOAT(I-1)/FLOAT(NASEC(ISEC)-1)
-          IF(XF.LT.P) THEN
-           SLP = C/P**2 * 2.0*(P - XF)
-          ELSE
-           SLP = C/(1.0-P)**2 * 2.0*(P - XF)
-          ENDIF
-          THK = (0.29690*SQRT(XF)
+
+          XASEC(I,ISEC) = XF
+          TASEC(I,ISEC) = 
+     &        (   0.29690*SQRT(XF)
      &          - 0.12600*XF
      &          - 0.35160*XF**2
      &          + 0.28430*XF**3
-     &          - 0.10150*XF**4) * T / 0.10
-C
-          XASEC(I,ISEC) = XF
-          SASEC(I,ISEC) = SLP
-          TASEC(I,ISEC) = THK
+     &          - 0.10150*XF**4  ) * T * 10.0
+          IF    (XF .LT. P) THEN
+           SASEC(I,ISEC) = C * 2.0*(P - XF) / P**2
+          ELSEIF(XF .GE. P) THEN
+           SASEC(I,ISEC) = C * 2.0*(P - XF) / (1.0-P)**2
+          ELSE
+           SASEC(I,ISEC) = 0.
+          ENDIF
         ENDDO
+
         CALL NRMLIZ(NASEC(ISEC),XASEC(1,ISEC))
 C
 C===========================================================================

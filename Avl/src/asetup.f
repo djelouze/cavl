@@ -167,14 +167,33 @@ C--------- always add on indirect freestream influence via BODY sources and doub
            VUNIT(3) = VUNIT(3) + WCSRD_U(3,I,IU)
 
 C--------- set r.h.s. for V.n equation
-           GAM_U(I,IU) = -DOT(ENC(1,I),VUNIT)
+           GAM_U_0(I,IU) = -DOT(ENC(1,I),VUNIT)
+           DO N = 1, NCONTROL
+             GAM_U_D(I,IU,N) = -DOT(ENC_D(1,I,N),VUNIT)
+           ENDDO
+           DO N = 1, NDESIGN
+             GAM_U_G(I,IU,N) = -DOT(ENC_G(1,I,N),VUNIT)
+           ENDDO
+
           ELSE
 C--------- just clear r.h.s.
-           GAM_U(I,IU) = 0.
+           GAM_U_0(I,IU) = 0.
+           DO N = 1, NCONTROL
+             GAM_U_D(I,IU,N) = 0.
+           ENDDO
+           DO N = 1, NDESIGN
+             GAM_U_G(I,IU,N) = 0.
+           ENDDO
           ENDIF
         ENDDO
 
-        CALL BAKSUB(NVMAX,NVOR,AICN,IAPIV,GAM_U(1,IU))
+        CALL BAKSUB(NVMAX,NVOR,AICN,IAPIV,GAM_U_0(1,IU))
+        DO N = 1, NCONTROL
+          CALL BAKSUB(NVMAX,NVOR,AICN,IAPIV,GAM_U_D(1,IU,N))
+        ENDDO
+        DO N = 1, NDESIGN
+          CALL BAKSUB(NVMAX,NVOR,AICN,IAPIV,GAM_U_G(1,IU,N))
+        ENDDO
  10   CONTINUE
 C
 C---- go over freestream rotation components p,q,r
@@ -201,13 +220,31 @@ C--------- always add on indirect freestream influence via BODY sources and doub
            VUNIT(3) = VUNIT(3) + WCSRD_U(3,I,IU)
 
 C--------- set r.h.s. for V.n equation
-           GAM_U(I,IU) = -DOT(ENC(1,I),VUNIT)
+           GAM_U_0(I,IU) = -DOT(ENC(1,I),VUNIT)
+           DO N = 1, NCONTROL
+             GAM_U_D(I,IU,N) = -DOT(ENC_D(1,I,N),VUNIT)
+           ENDDO
+           DO N = 1, NDESIGN
+             GAM_U_G(I,IU,N) = -DOT(ENC_G(1,I,N),VUNIT)
+           ENDDO
           ELSE
 C--------- just clear r.h.s.
-           GAM_U(I,IU) = 0.
+           GAM_U_0(I,IU) = 0.
+           DO N = 1, NCONTROL
+             GAM_U_D(I,IU,N) = 0.
+           ENDDO
+           DO N = 1, NDESIGN
+             GAM_U_G(I,IU,N) = 0.
+           ENDDO
           ENDIF
         ENDDO
-        CALL BAKSUB(NVMAX,NVOR,AICN,IAPIV,GAM_U(1,IU))
+        CALL BAKSUB(NVMAX,NVOR,AICN,IAPIV,GAM_U_0(1,IU))
+        DO N = 1, NCONTROL
+          CALL BAKSUB(NVMAX,NVOR,AICN,IAPIV,GAM_U_D(1,IU,N))
+        ENDDO
+        DO N = 1, NDESIGN
+          CALL BAKSUB(NVMAX,NVOR,AICN,IAPIV,GAM_U_G(1,IU,N))
+        ENDDO
    20 CONTINUE
 C
       RETURN
@@ -332,18 +369,48 @@ C--------------------------------------------------
 C
 C---- Set vortex strengths
       DO I = 1, NVOR
+        DO IU = 1, 6
+          GAM_U(I,IU) = GAM_U_0(I,IU)
+
+          DO N = 1, NCONTROL
+            GAM_U(I,IU) = GAM_U(I,IU) + GAM_U_D(I,IU,N)*DELCON(N)
+          ENDDO
+          DO N = 1, NDESIGN
+            GAM_U(I,IU) = GAM_U(I,IU) + GAM_U_G(I,IU,N)*DELDES(N)
+          ENDDO
+        ENDDO
+
+        DO N = 1, NCONTROL
+          GAM_D(I,N) = GAM_U_D(I,1,N)*VINF(1)
+     &               + GAM_U_D(I,2,N)*VINF(2)
+     &               + GAM_U_D(I,3,N)*VINF(3)
+     &               + GAM_U_D(I,4,N)*WROT(1)
+     &               + GAM_U_D(I,5,N)*WROT(2)
+     &               + GAM_U_D(I,6,N)*WROT(3)
+        ENDDO
+
+        DO N = 1, NDESIGN
+          GAM_G(I,N) = GAM_U_G(I,1,N)*VINF(1)
+     &               + GAM_U_G(I,2,N)*VINF(2)
+     &               + GAM_U_G(I,3,N)*VINF(3)
+     &               + GAM_U_G(I,4,N)*WROT(1)
+     &               + GAM_U_G(I,5,N)*WROT(2)
+     &               + GAM_U_G(I,6,N)*WROT(3)
+        ENDDO
+
         GAM(I) = GAM_U(I,1)*VINF(1)
      &         + GAM_U(I,2)*VINF(2)
      &         + GAM_U(I,3)*VINF(3)
      &         + GAM_U(I,4)*WROT(1)
      &         + GAM_U(I,5)*WROT(2)
      &         + GAM_U(I,6)*WROT(3)
-        DO N = 1, NCONTROL
-          GAM(I) = GAM(I) + GAM_D(I,N)*DELCON(N)
-        ENDDO
-        DO N = 1, NDESIGN
-          GAM(I) = GAM(I) + GAM_G(I,N)*DELDES(N)
-        ENDDO
+
+c        DO N = 1, NCONTROL
+c          GAM(I) = GAM(I) + GAM_D(I,N)*DELCON(N)
+c        ENDDO
+c        DO N = 1, NDESIGN
+c          GAM(I) = GAM(I) + GAM_G(I,N)*DELDES(N)
+c        ENDDO
       END DO
 C
 C---- Set source and doublet strengths

@@ -3,7 +3,7 @@ C
 C
       LOGICAL LPLOT, LCURS, LHID, LCREV
       COMMON /PLT_I/  LPLOT, LCURS, LHID, LCREV,
-     &                IDEV, IDEVH, IPSLU,
+     &                IDEV, IDEVH, IDEVM, IPSLU,
      &                NCOLORS
 C
       COMMON /PLT_R/  SCRNFRAC, SIZE, PLOTAR,

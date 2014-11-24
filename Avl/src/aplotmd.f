@@ -61,11 +61,12 @@ C
 C---- phase step and scale factor step for interactive phase plots
       DATA DPHASE, SCALEF / 5.0 , 1.25 /
 C
-C
       CALL GETWINSIZE(XWIND,YWIND)
-      CCH = 0.8*CH
+      CCH = 0.75*CH
       XPLT0 = XABS2USR(PMARG)
-      YPLT0 = YABS2USR(YWIND-PMARG) - 1.2*CCH
+      YPLT0 = YABS2USR(YWIND-YMARG-PMARG) - 1.2*CCH
+C
+      YSP = 2.0
 C
 C---- Initialization for plot program variables
       IF(LPLTNEW .OR. (.NOT.LPLOT)) THEN 
@@ -131,11 +132,8 @@ C
 C---- time step sign
       TSIGN = 1.0
 C
-C---- initial time, phase, and eigenvector scale
+C---- initial time
       TIMED = 0.
-      EPHASE = 0.
-      EIGENF = 1.
-      TMOFAC = 1.
 C
       POS(1) = POS0(1)
       POS(2) = POS0(2)
@@ -359,33 +357,34 @@ C
 C
 C***************************************************
 C---- plot the baseline and displaced geometry
-    8 CALL PVLINI(TITLE,AZIM,ELEV,TILT,VERSION)
+    8 CONTINUE
+      CALL PVLINI(TITLE,AZIM,ELEV,TILT,VERSION,LSVMOV)
 C
       XPLT = XPLT0
       YPLT = YPLT0
       CALL PLCHAR(XPLT,YPLT,CCH,'Run  ',0.0,5)
       CALL PLNUMB(999.,YPLT,CCH,FLOAT(IR),0.0,-1)
 C
-      YPLT = YPLT - 2.2*CCH
+      YPLT = YPLT - YSP*CCH
       CALL PLCHAR(XPLT,YPLT,CCH,'Mode ',0.0,5)
       CALL PLNUMB(999.,YPLT,CCH,FLOAT(KEIG),0.0,-1)
 C
-      YPLT = YPLT - 2.2*CCH
+      YPLT = YPLT - YSP*CCH
       CALL PLCHAR(XPLT,YPLT,CCH,'f = ',0.0,4)
       CALL PLNUMB(999.,YPLT,CCH,FRQ,0.0,4)
       CALL PLCHAR(999.,YPLT,CCH,' cycles/' ,0.0,8)
       CALL PLCHAR(999.,YPLT,CCH,UNCHT(1:NUT),0.0,NUT)
 C
-      YPLT = YPLT - 2.2*CCH
+      YPLT = YPLT - YSP*CCH
       CALL PLMATH(XPLT,YPLT,CCH,'z = ',0.0,4)
       CALL PLNUMB(999.,YPLT,CCH,DAMPR,0.0,6)
 C
-      YPLT = YPLT - 2.2*CCH
+      YPLT = YPLT - YSP*CCH
       CALL PLCHAR(XPLT,YPLT,CCH,'t = ',0.0,4)
       CALL PLNUMB(999.,YPLT,CCH,TIMED ,0.0,2)
       CALL PLCHAR(999.,YPLT,CCH,UNCHT(1:NUT),0.0,NUT)
 C
-      YPLT = YPLT - 2.2*CCH
+      YPLT = YPLT - YSP*CCH
       CALL PLMATH(XPLT,YPLT,CCH,'w = ',0.0, 4)
       CALL PLCHAR(XPLT,YPLT,CCH,' t  ',0.0, 4)
       CALL PLNUMB(999.,YPLT,CCH,EPHASE,0.0,-1)
@@ -393,51 +392,51 @@ C
 C
       YPLT = YPLT - 1.0*CCH
 C
-      YPLT = YPLT - 2.2*CCH
+      YPLT = YPLT - YSP*CCH
       CALL PLCHAR(XPLT,YPLT,CCH,'x = ',0.0, 4)
       CALL PLNUMB(999.,YPLT,CCH,POSE(1)*UNITL,0.0,-1)
       CALL PLCHAR(999.,YPLT,CCH,UNCHL,0.0,NUL)
 C
-      YPLT = YPLT - 2.2*CCH
+      YPLT = YPLT - YSP*CCH
       CALL PLCHAR(XPLT,YPLT,CCH,'y = ',0.0, 4)
       CALL PLNUMB(999.,YPLT,CCH,POSE(2)*UNITL,0.0,-1)
       CALL PLCHAR(999.,YPLT,CCH,UNCHL,0.0,NUL)
 C
-      YPLT = YPLT - 2.2*CCH
+      YPLT = YPLT - YSP*CCH
       CALL PLCHAR(XPLT,YPLT,CCH,'z = ',0.0, 4)
       CALL PLNUMB(999.,YPLT,CCH,POSE(3)*UNITL,0.0,-1)
       CALL PLCHAR(999.,YPLT,CCH,UNCHL,0.0,NUL)
 C
       YPLT = YPLT - 1.0*CCH
 C
-      YPLT = YPLT - 2.2*CCH
+      YPLT = YPLT - YSP*CCH
       CALL PLMATH(XPLT,YPLT,CCH,'f = ',0.0, 4)
       CALL PLNUMB(999.,YPLT,CCH,ANGE(1)/DTR,0.0,1)
       CALL PLMATH(999.,YPLT,CCH,'"',0.0,1)
 C
-      YPLT = YPLT - 2.2*CCH
+      YPLT = YPLT - YSP*CCH
       CALL PLMATH(XPLT,YPLT,CCH,'q = ',0.0, 4)
       CALL PLNUMB(999.,YPLT,CCH,ANGE(2)/DTR,0.0,1)
       CALL PLMATH(999.,YPLT,CCH,'"',0.0,1)
 C
-      YPLT = YPLT - 2.2*CCH
+      YPLT = YPLT - YSP*CCH
       CALL PLMATH(XPLT,YPLT,CCH,'y = ',0.0, 4)
       CALL PLNUMB(999.,YPLT,CCH,ANGE(3)/DTR,0.0,1)
       CALL PLMATH(999.,YPLT,CCH,'"',0.0,1)
 C
       YPLT = YPLT - 1.0*CCH
 C
-      YPLT = YPLT - 2.2*CCH
+      YPLT = YPLT - YSP*CCH
       CALL PLCHAR(XPLT,YPLT,CCH,'V = ',0.0, 4)
       CALL PLNUMB(999.,YPLT,CCH,VMAGE*VEE  ,0.0,-1)
       CALL PLCHAR(999.,YPLT,CCH,UNCHV,0.0,NUV)
 C
-      YPLT = YPLT - 2.2*CCH
+      YPLT = YPLT - YSP*CCH
       CALL PLMATH(XPLT,YPLT,CCH,'a = ',0.0, 4)
       CALL PLNUMB(999.,YPLT,CCH,ALFAE/DTR,0.0,2)
       CALL PLMATH(999.,YPLT,CCH,'"',0.0,1)
 C
-      YPLT = YPLT - 2.2*CCH
+      YPLT = YPLT - YSP*CCH
       CALL PLMATH(XPLT,YPLT,CCH,'b = ',0.0, 4)
       CALL PLNUMB(999.,YPLT,CCH,BETAE/DTR,0.0,2)
       CALL PLMATH(999.,YPLT,CCH,'"',0.0,1)
@@ -446,10 +445,14 @@ C
 C---- Setup hidden line data
       CALL HIDINITE(.TRUE., ANGE,POSE,XYZREF)
 C
+C---- plot baseline position
       CALL GETCOLOR(ICOL0)
       CALL PLOTMODE(ANG ,POS ,XYZREF,0)
+
+C---- plot mode-displaced position
       CALL NEWCOLORNAME('RED')
       CALL PLOTMODE(ANGE,POSE,XYZREF,1)
+
       CALL NEWCOLOR(ICOL0)
       CALL PLFLUSH
 C
@@ -751,14 +754,20 @@ C
       REAL PTS_LINES(3,2,NVMAX), ID_LINES(NVMAX),
      &     PTS_LPROJ(3,2,NVMAX)
 C
+      DATA ID_LINES / NVMAX * 0.0 /
+
       INCLUDE 'MASKS.INC'
 C
       IF(IPAT.EQ.0) THEN
        LMOUT = LMASK2
        LMCHD = LMASk3
+       IPOUT = 2
+       IPCHD = 1
       ELSE
        LMOUT = LMASK0
        LMCHD = LMASK1
+       IPOUT = 4
+       IPCHD = 1
       ENDIF
 C
 C---- number of line segments for drawing a body section "hoop"
@@ -812,6 +821,7 @@ C
          CALL VIEWPROJ(PTS_LINES,NPROJ,PTS_LPROJ)
 C
          CALL NEWPAT(LMCHD)
+         CALL NEWPEN(IPCHD)
          CALL PLOTLINES(NLINES,PTS_LPROJ,ID_LINES)
 c         DO IP = 1, NLINES
 c           CALL PLOT(PTS_LINES(1,1,IP),PTS_LINES(2,1,IP),3)
@@ -873,6 +883,7 @@ C
         CALL VIEWPROJ(PTS_LINES,NPROJ,PTS_LPROJ)
 C
         CALL NEWPAT(LMOUT)
+        CALL NEWPEN(IPOUT)
         CALL PLOTLINES(NLINES,PTS_LPROJ,ID_LINES)
 c        DO IP = 1, NLINES
 c          CALL PLOT(PTS_LINES(1,1,IP),PTS_LINES(2,1,IP),3)
@@ -911,6 +922,7 @@ C
         CALL VIEWPROJ(PTS_LINES,NPROJ,PTS_LPROJ)
 C
         CALL NEWPAT(LMCHD)
+        CALL NEWPEN(IPCHD)
         CALL PLOTLINES(NLINES,PTS_LPROJ,ID_LINES)
 c        DO IP = 1, NLINES
 c          CALL PLOT(PTS_LINES(1,1,IP),PTS_LINES(2,1,IP),3)
@@ -985,6 +997,7 @@ C
          CALL VIEWPROJ(PTS_LINES,NPROJ,PTS_LPROJ)
 C
          CALL NEWPAT(LMOUT)
+         CALL NEWPEN(IPOUT)
          CALL PLOTLINES(NLINES,PTS_LPROJ,ID_LINES)
 c         DO IP = 1, NLINES
 c           CALL PLOT(PTS_LINES(1,1,IP),PTS_LINES(2,1,IP),3)
@@ -1022,6 +1035,9 @@ C
       CSL = 0.70*CH
       CSN = 0.75*CH
       CSP = 0.55*CH
+
+      DXLAB = 2.0*CSP
+      DYLAB = 2.3*CSP
 C
 C---- data root overlay symbol size and type
       CSS = 0.55*CS
@@ -1030,11 +1046,7 @@ C
       LPGRID = .TRUE.
 C
 C---- initialize plot window and move origin away from lower left corner
-      CALL PLOPEN(SCRNFRAC,IPSLU,IDEV)
-C
-      IF(LCREV) THEN
-       CALL BGFILL
-      ENDIF
+      CALL PLTINI(IDEV)
 C
       CALL PLOT(1.0,0.75,-3)
       CALL NEWFACTOR(SIZE)
@@ -1046,10 +1058,11 @@ C---- aspect ratio, lower-left plot location
       YORG = YORG0
 C
 C---- draw plot
+      PARXY = PLOTAR - DYLAB*(1.3 + FLOAT(IRUN2-IRUN1+1))
       CALL PLROOT(XORG,YORG, 
      &            IRUN1, IRUN2, IRCOLOR, 
      &            JEMAX,NEIGEN,EVAL,LPROOT,LPRNUM,
-     &            UNCHT(1:NUT), PLOTAR,CS, LPGRID, 
+     &            UNCHT(1:NUT), PARXY,CS, LPGRID, 
      &            TMIN,TMAX,TDEL,TFAC,FMIN,FMAX,FDEL,FFAC)
 C
 cC---- plot "o" over shift location
@@ -1079,10 +1092,14 @@ C
 C
        DO IR = 1, NRMAX
          DO KEIG = 1, NEIGENDAT(IR)
-           CALL NEWCOLOR(IRCOLOR(IR))
-           XPLT = XORG + (REAL(EVALDAT(KEIG,IR))-TMIN)*TFAC
-           YPLT = YORG + (IMAG(EVALDAT(KEIG,IR))-FMIN)*FFAC
-           CALL PLSYMB(XPLT,YPLT,CSS,ISYMB,0.0,0)
+           XEV = REAL(EVALDAT(KEIG,IR))
+           YEV = IMAG(EVALDAT(KEIG,IR))
+           IF(YEV .GE. -1.0E-4) THEN
+            CALL NEWCOLOR(IRCOLOR(IR))
+            XPLT = XORG + (XEV-TMIN)*TFAC
+            YPLT = YORG + (YEV-FMIN)*FFAC
+            CALL PLSYMB(XPLT,YPLT,CSS,ISYMB,0.0,0)
+           ENDIF
          ENDDO
        ENDDO
        CALL NEWPEN(1)
@@ -1104,7 +1121,7 @@ C
 C
       CALL PLTPAR(XPLT,YPLT, IRUN1, IRUN2,
      &            PARV, LPPAR,
-     &            IRCOLOR, CSP )
+     &            IRCOLOR, CSP, DXLAB, DYLAB )
 C
       YPLT = YPLT + 3.0*CSP
       CALL STRIP(TITLE,NTI)

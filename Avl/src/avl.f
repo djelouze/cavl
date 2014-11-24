@@ -36,7 +36,7 @@ C
       INTEGER IINPUT(20)
 C
 C      
-      VERSION = 3.32
+      VERSION = 3.35
 C
  1000 FORMAT(A)
 C
@@ -393,7 +393,7 @@ C
 C
 C===============================================
       ELSEIF(COMAND.EQ.'PLOP') THEN
-       CALL OPLSET(IDEV,IDEVH,IPSLU,
+       CALL OPLSET(IDEV,IDEVH,IPSLU,LSVMOV,
      &             SIZE,PLOTAR,
      &             XMARG,YMARG,XPAGE,YPAGE,
      &             CH,SCRNFRAC,LCURS,LCREV)
@@ -434,8 +434,14 @@ c     IDEV = 4   ! Color PostScript output file only
 c     IDEV = 5   ! both X11 and Color PostScript file 
 C
 C---- Re-plotting flag (for hardcopy)
-      IDEVH = 2    ! B&W PostScript
-ccc   IDEVH = 4    ! Color PostScript
+c     IDEVH = 2    ! B&W PostScript
+      IDEVH = 4    ! Color PostScript
+C
+C---- Movie-plotting flag
+cc    IDEVH = 3    ! B&W PostScript
+      IDEVM = 5   ! both X11 and Color PostScript file 
+C
+      LSVMOV = .FALSE.   ! no movie PS output yet
 C
 C---- PostScript output logical unit and file specification
 ccc   IPSLU = -1  ! output to files plotNNN.ps on LU 80, with NNN = 001, 002, ...
@@ -507,6 +513,12 @@ C
      &                  UAXARW(1,1,1,IAX),NLINAX)
       ENDDO
 C
+C---- initial phase, eigenvector scale, slo-mo scale (for mode plots)
+      EPHASE = 0.0
+      EIGENF = 1.0
+      SLOMOF = 1.0
+      TMOFAC = 1.0
+
       RETURN
       END ! PLINIT
 
@@ -835,9 +847,15 @@ C
       PARUNCH(IPRHO)  = UNCHD
       PARUNCH(IPGEE)  = UNCHA
       PARUNCH(IPRAD)  = UNCHL
-      PARUNCH(IPXCG)  = UNCHL
-      PARUNCH(IPYCG)  = UNCHL
-      PARUNCH(IPZCG)  = UNCHL
+
+C---- bug  21 Feb 13   MD
+c      PARUNCH(IPXCG)  = UNCHL
+c      PARUNCH(IPYCG)  = UNCHL
+c      PARUNCH(IPZCG)  = UNCHL
+      PARUNCH(IPXCG)  = 'Lunit'
+      PARUNCH(IPYCG)  = 'Lunit'
+      PARUNCH(IPZCG)  = 'Lunit'
+
       PARUNCH(IPMASS) = UNCHM
       PARUNCH(IPIXX)  = UNCHI
       PARUNCH(IPIYY)  = UNCHI
@@ -962,7 +980,7 @@ C-------------------------------------------------
       CHARACTER*(*) FNAME
       LOGICAL ERROR
 C
-      CHARACTER*80 LINE
+      CHARACTER*80 LINE, REST
       CHARACTER*12 VARN, CONN
       CHARACTER*8  PARN
 C
@@ -1038,10 +1056,23 @@ C----- run case parameter data line
        GO TO 10
 C
  30    CONTINUE
-       READ(LINE(KEQU+1:80),*,ERR=80) PARV
-C
+       REST = LINE(KEQU+1:80)
+       READ(REST,*,ERR=80) PARV
        PARVAL(IP,IR) = PARV
-C
+
+
+       if(.false.) then
+       CALL STRIP(REST,NREST)
+       KBLK = INDEX(REST,' ')
+       IF(KBLK .NE. 0) THEN
+        REST = REST(KBLK+1:80)
+        CALL STRIP(REST,NREST)
+        IF(NREST.GT.0) THEN
+         PARUNCH(IP) = REST
+        ENDIF
+       ENDIF
+       endif
+
       ENDIF
 C
 C---- keep reading lines

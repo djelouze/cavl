@@ -1,6 +1,6 @@
-Square wing
+Square wing (CL=1.460227a)
 0.0                   !   Mach
-0     0     0.0       !   iYsym  iZsym  Zsym
+1     0     0.0       !   iYsym  iZsym  Zsym
  1.0  1.0   1.0       !   Sref   Cref   Bref   reference area, chord, span
  0.25 0.0   0.0       !   Xref   Yref   Zref   moment reference location (arb.)
 0.0                   !   CDp
@@ -9,10 +9,10 @@ Square wing
 #
 SURFACE
 Wing
-24  1.0    24  -2.0  ! Nchord   Cspace   Nspan  Sspace
+16 1.0    8  -2.0  ! Nchord   Cspace   Nspan  Sspace
 #
-YDUPLICATE
-0.0
+!YDUPLICATE
+!0.0
 #
 # twist angle bias for whole surface
 ANGLE

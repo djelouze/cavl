@@ -445,3 +445,37 @@ AVL 3.32   15 Jan 11                   MD
 - Fixed the post-processing calculation of the strip center of pressure, 
   labeled "C.P.x/c", in the strip-force output (FS command in OPER).  
   It was not correct for sections with significant sweep or dihedral.  
+
+------------------------------------------
+AVL 3.33   21 Feb 13                   MD
+
+- Fixed printout of length unit of X_cg,Y_cg,Z_cg in .run file.
+  This did not affect the results, or any other output.
+
+------------------------------------------
+AVL 3.34    7 Jun 13                   MD
+
+- Added capability do dump a multi-page PS file, to make an animated GIF
+
+------------------------------------------
+AVL 3.35   29 Nov 13                   MD
+
+- Added second-order righthand sides to the VL system, proportional
+  to both the unit translation+rotation velocities, and to control deflections.
+  The general superposition for the h.v. strengths is then:
+
+    Gam_i = Gam_ik Uk + U_k Gam_ikl delta_l    (new)
+
+  Previously only the U_1 (x-velocity) control-influence vector was present:
+
+    Gam_i = Gam_ik Uk +     Gam_il  delta_l    (old, second term assumes Uk = 1,0,0,0,0,0)
+
+  This improves convergence to the trim condition.
+  It also gives the correct eigenmode solutions even for large trim control deflections,
+  because the new derivatives w.r.t. translations and rotations are:
+
+    dGam_i/dU_k  =  Gam_ik  +  Gam_ikl delta_l    (new)
+
+  The previous form ignored the second term with trim control deflections:
+
+    dGam_i/dU_k  =  Gam_ik                        (old)

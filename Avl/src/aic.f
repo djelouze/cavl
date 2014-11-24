@@ -109,6 +109,7 @@ C
 CCC   ZOFF = 2.0*(ZSYM + ALFA*0.5*(RV1(1,J)+RV2(1,J)) )
 C     
 C...  Calculate the influence of the REAL vortex
+
             LBOUND = .NOT.(LVTEST .AND. I.EQ.J)
             CALL VORVELC(X,Y,Z,LBOUND,
      &           RV1(1,J),RV1(2,J),RV1(3,J),
@@ -128,10 +129,17 @@ C...  For sym/asym matrices check for vortex midpoints of image vortices
      &               Z.EQ.ZAVE       ) LBOUND = .FALSE.
 ccc   IF(.NOT.LBOUND) write(*,*) 'POS self vortex i,j ',i,j
                ENDIF
+
                CALL VORVELC(X,Y,Z,LBOUND,
      &              RV2(1,J),YOFF-RV2(2,J),RV2(3,J),
      &              RV1(1,J),YOFF-RV1(2,J),RV1(3,J),
      &              BETM,UI,VI,WI,RCORE)
+
+c               CALL VORVEL(X,Y,Z,LBOUND,
+c     &              RV2(1,J),YOFF-RV2(2,J),RV2(3,J),
+c     &              RV1(1,J),YOFF-RV1(2,J),RV1(3,J),
+c     &              BETM,UI,VI,WI)
+
                UI = UI*FYSYM
                VI = VI*FYSYM
                WI = WI*FYSYM 
@@ -171,6 +179,7 @@ C
             WC_GAM(3,I,J) = WS
 C     
  100     CONTINUE
+
  200  CONTINUE
 C     
       RETURN

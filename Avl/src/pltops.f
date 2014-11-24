@@ -18,6 +18,49 @@ C    along with this program; if not, write to the Free Software
 C    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 C***********************************************************************
 
+      SUBROUTINE PLTINI(IDEV1)
+      INCLUDE 'AVLPLT.INC'
+
+C---- terminate old plot if any
+      IF(LPLOT) CALL PLEND
+C
+C---- initialize new plot
+      CALL PLOPEN(SCRNFRAC,IPSLU,IDEV1)
+      LPLOT = .TRUE.
+
+      CALL DRAWTOBUFFER
+
+C---- set X-window size in inches (might have been resized by user)
+      CALL GETWINSIZE(XWIND,YWIND)
+C
+      IF(LCREV) THEN
+       CALL BGFILL
+      ENDIF
+C
+C---- draw plot page outline offset by margins
+      CALL NEWPEN(5)
+      IF(XMARG .GT. 0.0) THEN
+        CALL PLOTABS(      XMARG,      YMARG,3)
+        CALL PLOTABS(      XMARG,YPAGE-YMARG,2)
+        CALL PLOTABS(XPAGE-XMARG,      YMARG,3)
+        CALL PLOTABS(XPAGE-XMARG,YPAGE-YMARG,2)
+      ENDIF
+      IF(YMARG .GT. 0.0) THEN
+        CALL PLOTABS(      XMARG,      YMARG,3)
+        CALL PLOTABS(XPAGE-XMARG,      YMARG,2)
+        CALL PLOTABS(      XMARG,YPAGE-YMARG,3)
+        CALL PLOTABS(XPAGE-XMARG,YPAGE-YMARG,2)
+      ENDIF
+      CALL NEWPEN(1)
+C
+      CALL PLOTABS(XMARG,YMARG,-3)
+      CALL NEWCLIPABS( XMARG, XPAGE-XMARG, YMARG, YPAGE-YMARG )
+
+      RETURN
+      END ! PLTINI
+
+
+
       SUBROUTINE PLTSEG(VEC,ALF,N)
 C...PURPOSE:    Plot portions of vectors in VEC given by normalized
 C               segment start and end points in ALF
@@ -267,9 +310,19 @@ C
       SUBROUTINE BGFILL
       INCLUDE 'AVLPLT.INC'
       REAL XBOX(5), YBOX(5)
-      DATA XBOX / 0.0 , 11.0 , 11.0 , 0.0 , 0.0 /
-      DATA YBOX / 0.0 ,  0.0 ,  8.5 , 8.5 , 0.0 /
 C
+      XBOX(1) = 0.0
+      XBOX(2) = XWIND
+      XBOX(3) = XWIND
+      XBOX(4) = 0.0
+      XBOX(5) = XBOX(1)
+
+      YBOX(1) = 0.0
+      YBOX(2) = 0.0
+      YBOX(3) = YWIND
+      YBOX(4) = YWIND
+      YBOX(5) = XBOX(1)
+
       CALL NEWCOLORNAME('BLACK')
       IF(SCRNFRAC .GT. 0.0) THEN
        CALL POLYLINE(XBOX,YBOX,5,1)

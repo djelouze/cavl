@@ -208,8 +208,10 @@ C
 
 
       subroutine gw_curs(X,Y,kchar)
-C---Gets location of mouse click in graphics window in 
-C---absolute coordinates
+C---Gets location of mouse in graphics window in 
+C---absolute coordinates.  Returns position when mouse button is pressed 
+C---or keyboard key is pressed.
+C
       include 'pltlib.inc'
 C
       if(LGW_OPEN) then
@@ -229,6 +231,32 @@ C
       return
       end
 
+
+      subroutine gw_cursc(X,Y,ibtn)
+C---Gets current location of mouse in graphics window in 
+C---absolute coordinates.  Returns current position while mouse button 
+C---is pressed, with ibtn=1. When mouse button is released ibtn=0.  
+C---
+C---
+      include 'pltlib.inc'
+      integer ibtn
+C
+      if(LGW_OPEN) then
+C
+C------ set previous cursor position (if any) for warping destination
+        ix =           GX_ORG + GX_CRS
+        iy = GY_SIZ - (GY_ORG + GY_CRS)
+C
+        call gwxcursc(ix,iy,ibtn)
+        GX_CRS =          ix - GX_ORG
+        GY_CRS = GY_SIZ - iy - GY_ORG
+C
+        X = float(GX_CRS)/G_SCALE
+        Y = float(GY_CRS)/G_SCALE
+C
+      endif
+      return
+      end
 
 
       subroutine gw_revflag

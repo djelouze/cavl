@@ -43,7 +43,7 @@ PROGS = volts volts_old \
         symbols symbolsall \
 	squares squaresdoublebuff \
 	spectrum cmap2 cmap3 defmap \
-        gridtest zoomtest contest
+        gridtest zoomtest contest mousexy mousexy2
 
 
 examples:  $(PROGS)
@@ -99,6 +99,15 @@ zoomtest: zoomtest.o
 contest: contest.o 
 	$(FC) -o contest contest.o $(LIB) $(LINKLIB)
 
+mousexy: mousexy.o 
+	$(FC) -o mousexy mousexy.o $(LIB) $(LINKLIB)
+
+mousexy2: mousexy2.o 
+	$(FC) -o mousexy2 mousexy2.o $(LIB) $(LINKLIB)
+
+mousexy3: mousexy3.o 
+	$(FC) -o mousexy3 mousexy3.o $(LIB) $(LINKLIB)
+
 
 
 volts.o: volts.f
@@ -138,6 +147,15 @@ zoomtest.o: zoomtest.f
 	$(FC) -c $(FFLAGS) $<
 
 contest.o: contest.f
+	$(FC) -c $(FFLAGS) $<
+
+mousexy.o: mousexy.f
+	$(FC) -c $(FFLAGS) $<
+
+mousexy2.o: mousexy2.f
+	$(FC) -c $(FFLAGS) $<
+
+mousexy3.o: mousexy3.f
 	$(FC) -c $(FFLAGS) $<
 
 #May need to specify these on a brain-dead make system

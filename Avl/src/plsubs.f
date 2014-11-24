@@ -40,9 +40,11 @@ C---- label character size
       CSL = 1.5*CS
       CSU = 1.2*CS
       CSA = 1.0*CS
-      CSS = 0.4*CS
+      CSS = 0.5*CS
       CSN = 0.8*CS
 C
+      NRUN = IRUN2 - IRUN1 + 1
+
 C---- root symbol index
       ISYMB = 1
 C
@@ -73,6 +75,7 @@ C
            ENDIF
          ENDDO
        ENDDO
+       YMIN = 0.0     !##
        CALL AXISADJ(YMIN,YMAX, YTOT, YDEL, NANN)
       ENDIF
 C
@@ -82,7 +85,7 @@ C---- make sure aspect ratio of plot isn't absurd
        CALL AXISADJ(XMIN,XMAX, XTOT, XDEL, NANN)
       ENDIF
       IF(YMAX-YMIN .LT. 2.0*XDEL) THEN
-       YMIN = 0.5*(YMIN+YMAX) - XDEL
+cc       YMIN = 0.5*(YMIN+YMAX) - XDEL  !##
        YMAX = YMIN + 2.0*XDEL
        CALL AXISADJ(YMIN,YMAX, YTOT, YDEL, NANN)
       ENDIF
@@ -174,16 +177,20 @@ C---- plot root symbols
       DO IR = IRUN1, IRUN2
         DO KEIG = 1, NEIGEN(IR)
           IF(LPROOT(KEIG,IR)) THEN
-           CALL NEWPEN(5)
-           CALL NEWCOLOR(IRCOLOR(IR))
-           XPLT = (REAL(EVAL(KEIG,IR)) - XOFF)*XFAC
-           YPLT = (IMAG(EVAL(KEIG,IR)) - YOFF)*YFAC
-           CALL XYSYMB(1,XPLT,YPLT,0.0,1.0,0.0,1.0,CSS,ISYMB)
-           IF(LPRNUM(KEIG,IR)) THEN
-            CALL NEWPEN(2)
-            XNUM = XPLT + 0.65*CSS
-            YNUM = YPLT + 0.65*CSS
-            CALL PLNUMB(XNUM,YNUM,CSN,FLOAT(IR),0.0,-1)
+           XEV = REAL(EVAL(KEIG,IR))
+           YEV = IMAG(EVAL(KEIG,IR))
+           IF(YEV .GE. -1.0E-4) THEN
+            CALL NEWPEN(5)
+            CALL NEWCOLOR(IRCOLOR(IR))
+            XPLT = (XEV - XOFF)*XFAC
+            YPLT = (YEV - YOFF)*YFAC
+            CALL XYSYMB(1,XPLT,YPLT,0.0,1.0,0.0,1.0,CSS,ISYMB)
+            IF(LPRNUM(KEIG,IR)) THEN
+             CALL NEWPEN(2)
+             XNUM = XPLT + 0.85*CSS
+             YNUM = YPLT + 0.85*CSS
+             CALL PLNUMB(XNUM,YNUM,CSN,FLOAT(IR),0.0,-1)
+            ENDIF
            ENDIF
           ENDIF
         ENDDO
@@ -199,7 +206,7 @@ C
 
       SUBROUTINE PLTPAR(XPLT,YPLT, IRUN1, IRUN2,
      &                  PARVAL,LPPAR,
-     &                  IRCOLOR, CSIZ )
+     &                  IRCOLOR, CSIZ, DELX, DELY)
 C-----------------------------------------------
 C     Plots operating conditions in table form
 C-----------------------------------------------
@@ -218,8 +225,6 @@ C
 C
       CS  =     CSIZ
       CSL = 1.3*CSIZ
-C
-      DELX = 2.0*CS
 C
 C---- set number of significant digits for each variable
       DO IP = 1, IPTOT
@@ -258,7 +263,7 @@ C
 C
       Y = YPLT
       DO IR = IRUN2, IRUN1, -1
-        Y = Y + 2.5*CS
+        Y = Y + DELY
 C
         CALL NEWCOLOR(IRCOLOR(IR))
 C
@@ -281,7 +286,7 @@ C
       CALL NEWCOLOR(ICOL0)
       CALL NEWPEN(3)
 C
-      Y = Y + 2.8*CS
+      Y = Y + DELY + 0.3*CS
 C
       DO IP = 1, IPTOT
         IF(LPPAR(IP)) THEN
@@ -294,7 +299,7 @@ C---- save upper Y limit for passing back
       YPLT = Y + CSL
 C
       RETURN
-      END
+      END ! PLTPAR
 
 
 

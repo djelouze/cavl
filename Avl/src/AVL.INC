@@ -334,6 +334,9 @@ C
      & DCP_D(NVMAX,NDMAX),
      & DCP_G(NVMAX,NGMAX),
      & GAM(NVMAX),             ! circulation of h.v. vortex
+     & GAM_U_0(NVMAX,NUMAX),
+     & GAM_U_D(NVMAX,NUMAX,NDMAX),
+     & GAM_U_G(NVMAX,NUMAX,NGMAX),
      & GAM_U(NVMAX,NUMAX),
      & GAM_D(NVMAX,NDMAX),
      & GAM_G(NVMAX,NGMAX),
@@ -381,7 +384,8 @@ C
      & LABEL_SURF, LABEL_STRP, LABEL_VRTX, LABEL_BODY,
      & LPLTNEW,    
      & LPLTSURF,
-     & LPLTBODY
+     & LPLTBODY, 
+     & LSVMOV
       COMMON /PLOT_L/          ! plotting flags
      & LWAKEPLT,   LLOADPLT,   LHINGEPLT,
      & LBOUNDLEG,  LCHORDLINE, LCAMBER,   LCNTLPTS, 
@@ -390,10 +394,12 @@ C
      & LABEL_SURF, LABEL_STRP, LABEL_VRTX, LABEL_BODY,
      & LPLTNEW,    
      & LPLTSURF(NFMAX),
-     & LPLTBODY(NBMAX)
+     & LPLTBODY(NBMAX),
+     & LSVMOV
       COMMON /PLOT_I/ NTRI, IMARKSURF, NAXANN(3), IRCOLOR(NRMAX)
       COMMON /PLOT_R/ TRI(16,ITMAX),
      &                AXMIN(3),AXMAX(3),AXDEL(3),AXSPAN(3),
      &                GMIN(3),GMAX(3),GMINP(3),GMAXP(3),
      &                VMIN(3),VMAX(3),VMINP(3),VMAXP(3),
-     &                DTMOVIE,TMOVIE, SLOMOF
+     &                DTMOVIE,TMOVIE, SLOMOF,
+     &                EPHASE, EIGENF, TMOFAC

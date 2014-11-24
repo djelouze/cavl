@@ -117,8 +117,8 @@ C
 C***************************************************
 C---- start geometry plot
  6    CONTINUE
-      CALL PVLINI(TITLE,AZIM,ELEV,TILT,VERSION)
-C
+      CALL PVLINI(TITLE,AZIM,ELEV,TILT,VERSION,.FALSE.)
+
 C---- DEBUG: Check the triangle array
       IF(LDEBUG) THEN
        CALL GETCOLOR(ICOL0)
@@ -133,6 +133,8 @@ cc      PAUSE
 C
 C---- plot the selected geometry items
       CALL PLOTGEOM
+
+
       CALL PLFLUSH
 C
  7    CONTINUE
@@ -575,7 +577,7 @@ C---- Select surfaces to plot
       CALL GLIMS(GMIN,GMAX,.FALSE.)
       CALL AXLIMS
 cc    CALL OFFINI
-      CALL PVLINI(TITLE,AZIM,ELEV,TILT,VERSION)
+      CALL PVLINI(TITLE,AZIM,ELEV,TILT,VERSION,.FALSE.)
       CALL PLOTGEOM
       CALL PLFLUSH
 C
@@ -679,13 +681,15 @@ CC
 
 
 
-      SUBROUTINE PVLINI(TITLE,AZIM,ELEV,TILT,VERSION)
+      SUBROUTINE PVLINI(TITLE,AZIM,ELEV,TILT,VERSION,LDEVM)
 C...PURPOSE:    Initializes plot frame for plotting and 
 C               puts up axis orientation and labels
 C
       INCLUDE 'AVLPLT.INC'
 C
       CHARACTER*80 TITLE
+      LOGICAL LDEVM
+
       CHARACTER*1 CHXYZ(3)
       DATA CHXYZ / 'x', 'y', 'z' /
 C
@@ -694,12 +698,12 @@ C
       SCH = 0.7*SIZE*CH
       DLEN = 0.045*SIZE
 C
-      CALL PLOPEN(SCRNFRAC,IPSLU,IDEV)
-      CALL DRAWTOBUFFER
-C
-      IF(LCREV) THEN
-       CALL BGFILL
+      IF(LDEVM) THEN
+       CALL PLTINI(IDEVM)
+      ELSE
+       CALL PLTINI(IDEV)
       ENDIF
+
 C
 C      IF(.NOT.LPLOT) CALL COLORMAP(NCOLORS)
       LPLOT = .TRUE. 
@@ -804,6 +808,8 @@ C
       LOGICAL LOFF(NLMAX)
       INTEGER IDUM(1)
       REAL DUM(1,1)
+
+      DATA ID_LINES / NVMAX * 0.0 /
 C
       INCLUDE 'MASKS.INC'
 C
@@ -895,6 +901,7 @@ C
        CALL VIEWPROJ(PTS_LINES,NPROJ,PTS_LPROJ)
        CALL PLOTLINES(NLINES,PTS_LPROJ,ID_LINES)
 C
+
        NPOINT = IN
        CALL VIEWPROJ(PTS_POINT,NPOINT,PTS_PPROJ)
 C
@@ -1736,6 +1743,7 @@ C-----  Check for hidden line treatment
           CALL HIDLIN(PTS_LPROJ(1,1,L),ID,NGRP,IDUM,DUM,
      &                NTRI,TRI,NALF,ALF)
         ENDIF
+
 C-----  If any of the line segment is visible, plot the visible pieces
         IF(NALF.GT.0) CALL PLTSEG(PTS_LPROJ(1,1,L),ALF,NALF)
       END DO

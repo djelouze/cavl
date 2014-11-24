@@ -1,4 +1,4 @@
-Supra 3.4m F3J
+Supra 3.4m F3J  zero dihedral
 0.0                      Mach
 0     0     0.0          iYsym  iZsym  Zsym
 #
@@ -9,6 +9,17 @@ Supra 3.4m F3J
 #
 #
 #=============================================
+BODY
+Fuse pod
+28   2.0
+#
+TRANSLATE
+0.0  0.0  -1.75
+#
+BFIL
+fuseSupra.dat
+
+#==============================================================
 SURFACE
 Inner Wing
  7  1.0   8 -2.9   ! Nchord  Cspace   Nspan  Sspace
@@ -23,7 +34,7 @@ YDUPLICATE
 0.0
  
 SCALE
-1.0  1.0  0.0437         ! 2.5 deg dihedral
+1.0  1.0  0.0            ! 0   deg dihedral
  
 TRANSLATE
 0.0  0.0  0.0
@@ -69,10 +80,10 @@ YDUPLICATE
 0.0
  
 SCALE
-1.0   1.0  0.13165   !  7.5 deg dihedral
+1.0   1.0  0.0       !  7.5 deg dihedral
 
 TRANSLATE
-0.25  31.5  1.37655
+0.25  31.5  0.0     
  
 #---------------------------------------------
 SECTION
@@ -165,7 +176,8 @@ SCALE
 1.0 1.0 1.0
  
 TRANSLATE
-37.5 0.0  2.1
+!37.5 0.0  2.1
+37.5 0.0  2.8
 
 #---------------------------------------------
 SECTION
@@ -211,7 +223,8 @@ ANGLE
      0.0     twist angle bias for whole surface
  
 SCALE
-1.15 1.15 1.1
+!1.15 1.15 1.1
+1.61 1.61 1.54
  
 TRANSLATE
 42.5 0.0  0.0

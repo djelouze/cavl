@@ -202,7 +202,7 @@ these all have a common arbitrary prefix "xxx", and the following extensions:
 
 xxx.avl     required main input file defining the configuration geometry
 xxx.mass    optional file giving masses and inertias, and dimensional units
-xxx.run     optional file defining the parameter for some number of run cases
+xxx.run     optional file defining parameters for some number of run cases
 
 The user provides files xxx.avl and xxx.mass, which are typically created
 using any text editor.  Sample files are provided for use as templates.
@@ -217,7 +217,7 @@ Geometry Input File -- xxx.avl
 ==============================
 
 This file describes the vortex lattice geometry and aerodynamic 
-section properties.  Sample input files are in the /runs subdirectory.
+section properties.  Sample input files are in the runs/ subdirectory.
 
 
 Coordinate system
@@ -407,8 +407,8 @@ This optional keywords COMPONENT (or INDEX for backward compatibility)
 allows multiple input SURFACEs to be grouped together into a composite 
 virtual surface, by assigning each of the constituent surfaces the same 
 Lcomp value.  Application examples are:
-- A wing component made up of a wing and a winglet.
-- A T-tail component made up of horizontal and vertical tail surfaces.
+- A wing component made up of a wing SURFACE and a winglet SURFACE
+- A T-tail component made up of horizontal and vertical tail SURFACEs.
 
 A common Lcomp value instructs AVL to _not_ use a finite-core model
 for the influence of a horseshoe vortex and a control point which lies
@@ -438,10 +438,9 @@ implied aerodynamic image surface, and velocities will be computed
 directly on the line-vortex segments of the images.  This will 
 almost certainly produce an arithmetic fault.
 
-The duplicated surface gets the same Lsurf value as the parent surface,
-so they are considered to be the same physical surface.  There is
-no significant effect on the results if they are in reality 
-two physical surfaces.
+The duplicated surface gets the same Lcomp value as the parent surface,
+so they are considered to be the same COMPONENT.  There is no significant 
+effect on the results if they are in reality two physically-separate surfaces.
 
 
   Ydupl =  Y position of X-Z plane about which the current surface is 
@@ -961,7 +960,7 @@ by employing a finite core size for each vortex on a surface which is
 influencing a control point in another aurface (unless the two surfaces
 share the same COMPONENT declaration).  This feature can be disabled
 by setting the core size to zero in the OPER sub-menu, Option 
-sub-sub-menu, command C.  This reverts AVL to the standard AVL method.
+sub-sub-menu, command C.  This reverts AVL to the standard VL method.
 
 2) Spanwise vortex spacings should be "smooth", with no sudden
 changes in spanwise strip width.  Adjust Nspan and Sspace parameters
@@ -1003,7 +1002,7 @@ Mass Input File -- xxx.mass
 This optional file describes the mass and inertia properties of the 
 configuration.  It also defines units to be used for run case setup.  
 These units may want to be different than those used to define 
-the geometry.  Sample input xxx.mass files are in the /runs subdirectory.
+the geometry.  Sample input xxx.mass files are in the runs/ subdirectory.
 
 
 Coordinate system

@@ -219,7 +219,7 @@ C
       REAL X(*), Y(*), XC(*), YC(*), TC(*)
       LOGICAL LNORM
 C
-      PARAMETER(NSIZ=300)
+      PARAMETER(NSIZ=500)
       REAL XP(NSIZ), YP(NSIZ), S(NSIZ)
 C
       PI = 4.0*ATAN(1.0)

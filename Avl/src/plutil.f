@@ -239,11 +239,11 @@ C
 
 
 
-      SUBROUTINE OPLSET(IDEV,IDEVH,IPSLU,
+      SUBROUTINE OPLSET(IDEV,IDEVH,IPSLU,LSVMOV,
      &                  SIZE,PAR,
      &                  XMARG,YMARG,XPAGE,YPAGE,
      &                  CSIZE,SCRNFR,LCURS,LCREV)
-      LOGICAL LCURS,LCREV
+      LOGICAL LSVMOV,LCURS,LCREV
 C-----------------------------------------------------------
 C     Allows user modification of various plot parameters.
 C-----------------------------------------------------------
@@ -276,22 +276,23 @@ C
       LCOLOR = IDEVH .EQ. 4
       LFILES = IPSLU .LT. 0
 C
-      WRITE(*,2000) LGRAPH, LCOLOR, LFILES,
-     &              PAR, SIZE,
+      WRITE(*,2000) LGRAPH, LCOLOR, LFILES, LSVMOV,
+     &              PAR, ASF, SIZE,
      &              XPAGE,YPAGE, XMARG,YMARG, 
-     &              CSIZE, ASF,
+     &              CSIZE,
      &              CHLAND, CHCURS
  2000 FORMAT(' ...............................................'
      &     //'  G raphics-enable flag        ', L2,
      &      /'  C olor PostScript output?    ', L2,
      &      /'  I ndividual PS file output?  ', L2,
-     &      /'  A spect ratio of plot object ', F8.4
-     &      /'  S ize of plot object         ', F6.2,'"'
+     &      /'  H ardcopy movie PS output?   ', L2,
+     &     //'  A spect ratio of plot object ', F8.4
+     &      /'  W indow/screen size fraction ', F8.4
+     &     //'  S ize of plot object         ', F6.2,'"'
      &      /'  P age dimensions             ', F6.2,' x',F6.2,'"'
      &      /'  M argins from page edges     ', F6.2,'",',F6.2,'"'
      &      /'  F ont size (relative)        ', F8.4
-     &      /'  W indow/screen size fraction ', F8.4
-     &      /'  O rientation of plot:        ', A 
+     &     //'  O rientation of plot:        ', A 
      &      /'  B lowup input method:        ', A )
 ccc     &      /'  R everse-video output?       ', L2 )
 C
@@ -385,7 +386,7 @@ C
         ELSE
           CALL ASKR('Enter window/screen size fraction^',ASF)
         ENDIF
-        SCRNFR = SIGN( SCRNFR , ASF )
+        SCRNFR = SIGN( ASF , SCRNFR )
 C
       ELSEIF (INDEX('Bb',VAR).NE.0) THEN
         LCURS = .NOT. LCURS

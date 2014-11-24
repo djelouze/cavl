@@ -432,6 +432,11 @@ C
       dimension x(n), y(n)
       dimension XABS(MaxPolyLine), YABS(MaxPolyLine)
 C
+      if(n.GT.MaxPolyline) then
+        write(*,*) '*** Error - too many polyline points'
+        stop
+      endif
+C
       if(n.LE.1) return
 C...Convert coordinates to absolute coordinates
       do i=1, n
@@ -609,8 +614,9 @@ C
 
 
       subroutine GETCURSORXY(x,y,chkey)
-C...Return current cursor (mouse) x,y location in user coordinates 
-C...chkey returns the key pressed (instead of mouse click, say)
+C...Return current cursor (mouse) x,y location in user coordinates
+C...when the mouse button or keyboard key is pressed.
+C...chkey returns the character for the key pressed (if keyboard) 
       include 'pltlib.inc'
       character*1 chkey
 C
@@ -624,12 +630,45 @@ C...get user coordinates
 
       subroutine GETCURSORXYABS(X,Y,chkey)
 C...Return current cursor (mouse) X,Y location in absolute coordinates 
-C...chkey returns the key pressed (instead of mouse click, say)
+C...when the mouse button or keyboard key is pressed.
+C...chkey returns the character for the key pressed (if keyboard) 
       include 'pltlib.inc'
       character*1 chkey
 C
       call gw_curs(XZ,YZ,khar)
       chkey = char(khar)
+      if(LGW_GEN) call gw_flush
+C
+C...get absolute coordinates
+      X = X_ZM2ABS(XZ)
+      Y = Y_ZM2ABS(YZ)
+      return
+      end
+
+
+      subroutine GETCURSORXYC(x,y,ibtn)
+C...Return current cursor (mouse) x,y location in user coordinates 
+C...while mouse button is pressed.  Button status ibtn=1 (down), ibtn=0
+C...(button released)
+      include 'pltlib.inc'
+      integer ibtn
+C
+      call getcursorxyabsc(XA,YA,ibtn)
+C...get user coordinates
+      x = XABS2usr(XA)
+      y = YABS2usr(YA)
+      return
+      end
+
+
+      subroutine GETCURSORXYABSC(X,Y,ibtn)
+C...Return current cursor (mouse) X,Y location in absolute coordinates. 
+C...Gets current mouse position when button is down (ibtn=1). Returns with
+C...flag ibtn=0 when mouse button is released.
+      include 'pltlib.inc'
+      integer ibtn
+C
+      call gw_cursc(XZ,YZ,ibtn)
       if(LGW_GEN) call gw_flush
 C
 C...get absolute coordinates

@@ -21,5 +21,5 @@ FFLAGS  = -O3 $(DP)
 CFLAGS  = -O3 $(DEFINE)
 AR = ar r
 RANLIB = ranlib 
-LINKLIB = -L/usr/X11R6/lib -lX11
+LINKLIB = -L/usr/X11/lib -lX11
 

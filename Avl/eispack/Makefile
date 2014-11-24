@@ -1,17 +1,17 @@
 
-FC = ifort
+FC = gfortran
 FLG = -O
-EISLIB = eispack.a
 AR = ar r
 RAN = ranlib
 
 DP =
+EISLIB = eispack_gSP.a
 
-#- uncomment for double-precision option
-DP = -r8
+#DP = -fdefault-real-8
+#EISLIB = eispack_gDP.a
 
 
-eispack.a: eispack.f
+$(EISLIB): eispack.f
 	$(FC) -c $(FLG) $(DP) eispack.f
 	$(AR) $(EISLIB) eispack.o
 	$(RAN) $(EISLIB)

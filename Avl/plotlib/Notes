@@ -217,3 +217,15 @@ Bug fixes.  Fixed the Postscript output of solid-fill polygons.
 Additions.  Added  SUBROUTINE VIEWR  to plt_3D.f .
             This is just a version of  SUBROUTINE VIEW, with a different
             passed-array indexing convention.
+
+
+Version 4.50  17 Dec 12  HY
+
+Bug fixes.  Fixed the bounding box print to give integers rather than floats.
+
+Additions.  Added immediate-mode cursor read capability in subroutines
+             GETCURSORXYC(x,y,ibtn)
+             GETCURSORXYABSC(x,y,ibtn)
+            Changes made to plt_base.f, gw_subs.f and Xwin2.c to support this
+            functionality.  Returns cursor position only when button is down
+            (ibtn=1), returns button flag ibtn=0 when mouse button is released

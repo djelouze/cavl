@@ -55,6 +55,9 @@ C---- Initialize plot stuff
       CHOLD = CH
       SIZE  = 9.0
       CH    = 0.014
+
+C---- line y-spacing factor
+      YSP = 2.0
 C
 C--- define colors used for plot data
       COL1 = 'green'   ! cl c/Cref
@@ -65,6 +68,12 @@ ccc   COL4 = 'yellow'  ! cl
 C
 C
       CALL GETSA(LNASA_SA,SATYPE,DIR)
+C
+      CA = COS(ALFA)
+      SA = SIN(ALFA)
+      CRSAX = CRTOT*CA + CNTOT*SA
+      CMSAX = CMTOT              
+      CNSAX = CNTOT*CA - CRTOT*SA  
 C
 C---- Find the min/max of Y,CL,CNC,downwash
  50   YMIN =  RV1(2,1)
@@ -160,13 +169,8 @@ C---- Modify CSF to allow portion of vertical space for a big label block
        WSF = 0.0
       ENDIF
 C
-      CALL PLOPEN(SCRNFRAC,IPSLU,IDEV)
+      CALL PLTINI(IDEV)
 C
-      IF(LCREV) THEN
-       CALL BGFILL
-      ENDIF
-C
-      LPLOT = .TRUE.
       CALL NEWFACTOR(PLFAC*SIZE)
       CALL GETCOLOR(ICOL0)
 C
@@ -248,7 +252,7 @@ C
 C
         IF(LCLPERPLT) THEN
          CALL NEWCOLORNAME(COL3)
-         CALL XYLINE(NJ(N),SLE(J),CLTSTRP(J),SMIN,SSF,0.0,CSF,2)
+         CALL XYLINE(NJ(N),SLE(J),CLTSTRP(J),SMIN,SSF,0.0,CSF,3)
          IF(LLABSURF) THEN
            XLAB = SMOD(SLE(JLABCL))         
            YLAB = CSF*CLTSTRP(JLABCL)         
@@ -286,7 +290,7 @@ C
        CALL NEWCOLORNAME(COL3)
        YTMP(1) = YLAB/CSF
        YTMP(2) = YTMP(1)
-       CALL XYLINE(2,XTMP,YTMP,SMIN,SSF,0.0,CSF,2)
+       CALL XYLINE(2,XTMP,YTMP,SMIN,SSF,0.0,CSF,3)
        CALL PLCHAR(SMOD(XTMP(2))+1.5*CH,CSF*YTMP(2)-0.5*CH,
      &            1.2*CH,'c'  ,0., 1)
        CALL PLMATH(SMOD(XTMP(2))+2.5*CH,CSF*YTMP(2)-0.9*CH,
@@ -296,7 +300,7 @@ C
       ENDIF
 C
       CALL NEWCOLORNAME(COL4)
-      YTMP(1) = YLAB/CSF - 2.2*CH/CSF
+      YTMP(1) = YLAB/CSF - YSP*CH/CSF
       YTMP(2) = YTMP(1)
       CALL XYLINE(2,XTMP,YTMP,SMIN,SSF,0.0,CSF,2)
       CALL PLCHAR(SMOD(XTMP(2))+1.5*CH,CSF*YTMP(2)-0.5*CH,
@@ -349,11 +353,11 @@ ccc      NCONLIN = (NCONTROL+1)/2
 C
 C---- Case title
       XLAB = SMOD(SMIN)
-      YLAB = MAX(WSF*WMAX,CSF*CMAX) + 15.9*CH + 2.2*CH*FLOAT(NCONLIN)
+      YLAB = MAX(WSF*WMAX,CSF*CMAX) + 15.0*CH + YSP*CH*FLOAT(NCONLIN)
 C
       CALL NEWPEN(3)
       CALL PLCHAR(XLAB,YLAB,1.2*CH,TITLE,0.0,LEN(TITLE))
-      YLAB = YLAB - 2.2*CH
+      YLAB = YLAB - YSP*CH
       IF(INDEX(RTITLE(IRUN),'unnamed') .EQ. 0) THEN
        CALL PLCHAR(XLAB,YLAB,1.1*CH,RTITLE(IRUN),0.0,LEN(RTITLE(IRUN)))
       ENDIF
@@ -365,7 +369,7 @@ C
       XL4 = XLAB + 43.5*CH
 C
       YLAB = YLAB - 0.6*CH
-      YLAB = YLAB - 2.2*CH
+      YLAB = YLAB - YSP*CH
 C
 C--- Flow condition and forces
       RX = WROT(1)*BREF/2.0
@@ -383,10 +387,12 @@ C
       CALL PLNUMB(XL3+7.0*CH,YLAB,CH, CLTOT  ,0.0,4)
 C
       CALL PLCHAR(XL4       ,YLAB,CH,'  Cl = ',0.0,7)
-      CALL PLNUMB(XL4+7.0*CH,YLAB,CH, DIR*CRTOT ,0.0,4)
+      CALL PLMATH(XL4       ,YLAB,CH,'    `'  ,0.0,5)
+cc    CALL PLNUMB(XL4+7.0*CH,YLAB,CH, DIR*CRTOT ,0.0,4)
+      CALL PLNUMB(XL4+7.0*CH,YLAB,CH, DIR*CRSAX ,0.0,4)
 C
 C
-      YLAB = YLAB - 2.2*CH
+      YLAB = YLAB - YSP*CH
       CALL PLMATH(XL1        ,YLAB,1.1*CH,'b'   ,0.0,1)
       CALL PLCHAR(XL1        ,YLAB,CH,'  = ',0.0,4)
       CALL PLNUMB(XL1+4.0*CH,YLAB,CH, BETA/DTR,0.0,4)
@@ -401,7 +407,7 @@ C
       CALL PLNUMB(XL4+7.0*CH,YLAB,CH, CMTOT   ,0.0,4)
 C
 C
-      YLAB = YLAB - 2.2*CH
+      YLAB = YLAB - YSP*CH
       CALL PLCHAR(XL1       ,YLAB,CH,'M = ',0.0,4)
       CALL PLNUMB(XL1+4.0*CH,YLAB,CH,AMACH ,0.0,3)
 C
@@ -411,12 +417,14 @@ C
       CALL PLCHAR(XL3       ,YLAB,CH,'  CD = ',0.0,7)
       CALL PLNUMB(XL3+7.0*CH,YLAB,CH, CDTOT   ,0.0,5)
 C
-      CALL PLCHAR(XL4        ,YLAB,CH,'  Cn = ',0.0,7)
-      CALL PLNUMB(XL4+7.0*CH,YLAB,CH, DIR*CNTOT, 0.0,4)
+      CALL PLCHAR(XL4       ,YLAB,CH,'  Cn = ',0.0,7)
+      CALL PLMATH(XL4       ,YLAB,CH,'    `'  ,0.0,5)
+cc    CALL PLNUMB(XL4+7.0*CH,YLAB,CH, DIR*CNTOT, 0.0,4)
+      CALL PLNUMB(XL4+7.0*CH,YLAB,CH, DIR*CNSAX, 0.0,4)
 C
 C
       YLABI = YLAB
-      YLABI = YLABI - 2.2*CH
+      YLABI = YLABI - YSP*CH
       CALL PLCHAR(XL3       ,YLABI,CH,'  CD = ',0.0,7)
       CALL PLCHAR(XL3+3.8*CH,YLABI-0.4*CH,
      &                         0.8*CH,'i'      ,0.0,1)
@@ -425,7 +433,7 @@ C
       CALL PLCHAR(XL4       ,YLABI,CH,'   e = ',0.0,7)
       CALL PLNUMB(XL4+7.0*CH,YLABI,CH, SPANEF  ,0.0,4)
 C
-      YLABI = YLABI - 2.2*CH
+      YLABI = YLABI - YSP*CH
       CALL PLCHAR(XL3       ,YLABI,CH,'  CD = ',0.0,7)
       CALL PLCHAR(XL3+3.8*CH,YLABI-0.4*CH,
      &                         0.8*CH,'p'      ,0.0,1)
@@ -440,7 +448,7 @@ C
       ENDDO
       DO N = 1, NCONTROL
         XLAB = XL1
-        YLAB = YLAB - 2.2*CH
+        YLAB = YLAB - YSP*CH
         CALL PLCHAR(XLAB,YLAB,CH,DNAME(N) ,0.0,NUMD)
         CALL PLCHAR(999.,YLAB,CH,' = '    ,0.0,3)
         CALL PLNUMB(999.,YLAB,CH,DELCON(N),0.0,4)

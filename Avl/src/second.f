@@ -2,15 +2,11 @@
       SUBROUTINE SECONDS(TSEC)
       REAL*8 TSEC
 C
-      REAL*8 MICSEC
+C...SECNDS is a real*4 function that returns seconds.
+C   The value is modified by subtracting the supplied argument.
+C   It acts as in the VMS FORTRAN Manual.
 C
-C---- get CPU time in microseconds
-      CALL CLOCKX(MICSEC)
-C
-C---- return seconds
-      TSEC = MICSEC/1.0D6
-C
-      RETURN
+      REAL*4 SECNDS, TIME
+      TIME = 0.0
+      TSEC = SECNDS(TIME)
       END
-
-

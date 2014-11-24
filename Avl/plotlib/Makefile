@@ -42,7 +42,7 @@ PLTLIB = libPlt.a
 ###========================================================
 ###  Basic plot library object files
 OBJ     = plt_base.o plt_font.o plt_util.o plt_color.o \
-          set_subs.o gw_subs.o ps_subs.o Xwin.o
+          set_subs.o gw_subs.o ps_subs.o Xwin2.o
 OBJMISC =
 OBJ3D   =
 OBJOLD  =
@@ -131,6 +131,8 @@ util-ops.o: util-ops.f
 
 Xwin.o: Xwin.c
 	$(CC) -c $(CFLAGS) Xwin.c
+Xwin2.o: Xwin2.c
+	$(CC) -c $(CFLAGS) Xwin2.c
 
 
 ### May need to specify these on a brain-dead make system

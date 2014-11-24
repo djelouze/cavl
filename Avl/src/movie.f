@@ -301,7 +301,8 @@ C
 C
 C***************************************************
 C---- plot the baseline and displaced geometry
-    8 CALL PVLINI(TITLE,AZIM,ELEV,TILT,VERSION)
+    8 CONTINUE
+      CALL PVLINI(TITLE,AZIM,ELEV,TILT,VERSION,LSVMOV)
 C
       CALL GETWINSIZE(XWIND,YWIND)
 C

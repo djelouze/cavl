@@ -920,17 +920,17 @@ C
 C---- set VINF() vector from initial ALFA,BETA
       CALL VINFAB
 C
-      IF(NCONTROL.GT.0) THEN
-C----- set GAM_D
-ccc       WRITE(*,*) ' Solving for vortex control-var sensitivities...'
-       CALL GDCALC(NCONTROL,LCONDEF,ENC_D,GAM_D)
-      ENDIF
+c      IF(NCONTROL.GT.0) THEN
+cC----- set GAM_D
+cccc       WRITE(*,*) ' Solving for vortex control-var sensitivities...'
+c       CALL GDCALC(NCONTROL,LCONDEF,ENC_D,GAM_D)
+c      ENDIF
 C
-      IF(NDESIGN.GT.0) THEN
-C----- set GAM_G
-ccc       WRITE(*,*) ' Solving for vortex  design-var sensitivities...'
-       CALL GDCALC(NDESIGN ,LDESDEF,ENC_G,GAM_G)
-      ENDIF
+c      IF(NDESIGN.GT.0) THEN
+cC----- set GAM_G
+cccc       WRITE(*,*) ' Solving for vortex  design-var sensitivities...'
+c       CALL GDCALC(NDESIGN ,LDESDEF,ENC_G,GAM_G)
+c      ENDIF
 C
 C---- sum AIC matrices to get GAM,SRC,DBL
       CALL GAMSUM
@@ -1423,6 +1423,7 @@ C---------------------------------
        LAIC = .FALSE.
        LSRD = .FALSE.
        LSOL = .FALSE.
+       LVEL = .FALSE.
        LSEN = .FALSE.
 C
  1015  FORMAT(' Z Symmetry: No symmetry assumed')

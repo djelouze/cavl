@@ -2,8 +2,7 @@
 # Makefile for AVL
 #
 
-BINDIR = .
-BINDIR = /home/codes/bin
+BINDIR = /home/codes/bin/
 INSTALLCMD = install -s
 
 SRC = ../src
@@ -29,8 +28,10 @@ FC = f77
 FFLAGS = -O
 PLTLIB = -lX11
 FTNLIB =
+
 #Subroutine SECOND source file
 SECOND = second_g77.f
+
 ##--------------------------
 
 # Uncomment flags for desired machine...
@@ -68,14 +69,35 @@ FC = ifort
 FFLAGS = -O 
 PLTLIB = -L/usr/X11R6/lib -lX11
 SECOND = second_ifc.f
-#FTNLIB = -Vaxlib /usr/lib/C-ctype.o /usr/lib/C_name.o /usr/lib/ctype-info.o
-#FTNLIB = -Vaxlib -i_dynamic
 #FTNLIB = -Vaxlib
 ##--------------------------
 ### double-precision option (also need double precision Eispack and libPlt)
 FFLAGS = -O -r8
-PLTOBJ = ../plotlib/libPltDP.a 
-#PLTOBJ = -lPltDP
+PLTOBJ = ../plotlib/libPltDP.a
+
+##---------------------------------------
+##  Uncomment for Mac OSX gfortran
+FC = gfortran
+
+ACHK = -fbounds-check -finit-real=inf -ffpe-trap=invalid,zero,denormal
+#ACHK =
+
+
+#FTNLIB = -Vaxlib
+FTNLIB = 
+SECOND = second_g77.f
+
+DP =
+PLTOBJ = ../plotlib/libPlt_gSP.a
+EIGOBJ = ../eispack/eispack_gSP.a
+
+#DP = -fdefault-real-8
+#PLTOBJ = ../plotlib/libPltDP.a
+#EIGOBJ = ../eispack/eispack_gDP.a
+
+FFLAGS = -O -m64 $(ACHK) $(DP)
+##---------------------------------------
+
 
 
 all:	 $(PROGS)
@@ -145,6 +167,8 @@ userio.o: $(SRC)/userio.f
 	$(FC) -c $(FFLAGS) $(SRC)/userio.f
 plutil.o: $(SRC)/plutil.f $(SRC)/MASKS.INC
 	$(FC) -c $(FFLAGS) $(SRC)/plutil.f
+arrow3d.o: $(SRC)/arrow3d.f $(SRC)/MASKS.INC
+	$(FC) -c $(FFLAGS) $(SRC)/arrow3d.f
 
 spline.o: $(SRC)/spline.f
 	$(FC) -c $(FFLAGS)  $(SRC)/spline.f
@@ -154,8 +178,6 @@ airutil.o: $(SRC)/airutil.f
 	$(FC) -c $(FFLAGS)  $(SRC)/airutil.f
 autil.o: $(SRC)/autil.f
 	$(FC) -c $(FFLAGS)  $(SRC)/autil.f
-arrow3d.o: $(SRC)/arrow3d.f $(SRC)/MASKS.INC
-	$(FC) -c $(FFLAGS) $(SRC)/arrow3d.f
 
 dtest.o: $(SRC)/dtest.f
 	$(FC) -c $(FFLAGS) $(SRC)/dtest.f

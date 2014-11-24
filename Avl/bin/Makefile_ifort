@@ -73,9 +73,10 @@ SECOND = second_ifc.f
 #FTNLIB = -Vaxlib
 ##--------------------------
 ### double-precision option (also need double precision Eispack and libPlt)
-FFLAGS = -O -r8
+#FFLAGS = -O -r8
 #PLTOBJ = ../plotlib/libPltDP.a 
-PLTOBJ = -lPltDP
+#EIGOBJ = ../eispack/eispack_DP.a
+
 
 
 all:	 $(PROGS)
@@ -92,6 +93,7 @@ $(SRC)/AVL.INC: $(SRC)/AINDEX.INC
 
 avl: $(AOBJS)
 	$(FC) -o avl $(AOBJS)  $(ALIBS) $(PLTOBJ) $(EIGOBJ) $(PLTLIB) $(FTNLIB)
+	$(INSTALLCMD) avl $(BINDIR)
 
 dtest: dtest.o
 	$(FC) -o dtest dtest.o
